@@ -1,0 +1,50 @@
+import random as rd
+import numpy as np
+import matplotlib.pyplot as plot
+
+#costruisco un vettore lungo 30 con numeri generati casualmente tra 3 e 1000
+numpartecipanti = np.random.rand(30) * 1000 +3
+numpartecipanti = np.array(numpartecipanti,dtype=int)
+
+for numcicli in range(0,100):
+
+    numcorretto = 0
+    numsbagliato = 0
+    #probabilità che il segnale ricevuto sia corretto
+    q = rd.uniform(0.5,1)
+    
+    #faccio un ciclo per fare più simulazioni modificando il numero di partecipanti all'esperimento
+    for N in numpartecipanti:
+        coloreurna = rd.randint(0,1)
+    
+        vettoresegnale = [] #vettore che contiene informazioni sulla pallina estratta da ogni giocatore
+        vettorescelta = [] #vettore che contiene la scelta di ogni giocatore
+
+        for i in range(0,N):
+            a =  rd.random()
+            if a <= q :
+                vettoresegnale.append(coloreurna)
+            else :
+                vettoresegnale.append(1 - coloreurna)
+
+        #i primi due giocatori veicolano informazione perfetta
+        vettorescelta = vettorescelta + [vettoresegnale[0],vettoresegnale[1]]
+        
+        if vettorescelta[0] == vettorescelta[1]:
+            for i in range(0,N):
+                vettorescelta.append(vettorescelta[0])
+        else:
+            for n in range(0,N):
+                vettorescelta.append(vettoresegnale[3])
+
+        if vettorescelta[N-1] == coloreurna:
+            numcorretto+=1 #conta le volte in cui la cascata fornisce il risultato corretto
+        else:
+            numsbagliato+=1 #conta le volte in cui la cascata fornisce il risultato errato
+
+    #costruisco degli istogrammi, ognuno con un valore di q differente, che faccia vedere graficamente quante volte la cascata porta all'errore
+    classi = ['scelta corretta', 'scelta errata']
+    occorrenze = [numcorretto, numsbagliato]
+    plot.bar(classi, occorrenze)
+    plot.suptitle('Istogramma scelta corretta o errata con q='+str(q))
+    plot.show()
